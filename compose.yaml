@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: 'mysql:latest'
+    environment:
+      - 'MYSQL_DATABASE=pizza_ordering'
+      - 'MYSQL_PASSWORD=pizza'
+      - 'MYSQL_ROOT_PASSWORD=verysecret'
+      - 'MYSQL_USER=pizza'
+    ports:
+      - '3306'
