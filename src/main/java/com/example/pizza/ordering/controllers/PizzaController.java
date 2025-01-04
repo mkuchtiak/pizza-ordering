@@ -23,7 +23,7 @@ public class PizzaController {
         return pizzaRepository.findAll();
     }
 
-    @PostMapping(path="") // Map ONLY POST Requests
+    @PostMapping(path="")
     public @ResponseBody String addNewPizza(@RequestParam String id,
                                             @RequestParam String name,
                                             @RequestParam BigDecimal price) {
