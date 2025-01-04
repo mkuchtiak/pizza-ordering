@@ -19,8 +19,11 @@ public class Order {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
+
+    @Transient
+    private String customerName;
 
     public Integer getId() {
         return id;
@@ -36,7 +39,7 @@ public class Order {
 
     @Transient
     public String getCustomerName() {
-        return customer.getName();
+        return customerName != null ? customerName : customer.getName();
     }
 
     @Transient

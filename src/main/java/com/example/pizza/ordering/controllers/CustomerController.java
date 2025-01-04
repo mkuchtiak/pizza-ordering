@@ -40,10 +40,25 @@ public class CustomerController {
         return customerRepository.findAll();
     }
 
+    @PostMapping(path="")
+    public @ResponseBody String addNewCustomer(@RequestParam String name,
+                                               @RequestParam String address) {
+        Customer customer = new Customer();
+        customer.setName(name);
+        customer.setAddress(address);
+        customerRepository.save(customer);
+        return String.format("Customer %s created", name);
+    }
+
     @GetMapping(path="{customerId}")
     public @ResponseBody Customer getCustomers(@PathVariable("customerId") int customerId) {
         return customerRepository.findById(customerId).orElseThrow(
                 () -> new ResponseStatusException(HttpStatus.NOT_FOUND));
+    }
+
+    @DeleteMapping(path="{customerId}")
+    public ResponseEntity<?> removeCustomer(@PathVariable("customerId") Integer customerId) {
+        return Utils.removeEntity(customerRepository, customerId);
     }
 
     @PostMapping(path="{customerId}/addOrder")
@@ -72,27 +87,10 @@ public class CustomerController {
                     return item;
                 }).toList();
 
+        order.setOrderItems(items);
         orderRepository.save(order);
 
-        orderItemRepository.saveAll(items);
-        order.setOrderItems(items);
-
         return String.format("Order %d created for %s customer", order.getId(), customer.getName());
-    }
-
-    @PostMapping(path="add")
-    public @ResponseBody String addNewCustomer(@RequestParam String name,
-                                               @RequestParam String address) {
-        Customer customer = new Customer();
-        customer.setName(name);
-        customer.setAddress(address);
-        customerRepository.save(customer);
-        return String.format("Customer %s created", name);
-    }
-
-    @DeleteMapping(path="{customerId}")
-    public ResponseEntity<?> removeCustomer(@PathVariable("customerId") Integer customerId) {
-        return Utils.removeEntity(customerRepository, customerId);
     }
 
     private List<PizzaInfo> getPizzaInfosFromQueryParameter(String pizzaList) {

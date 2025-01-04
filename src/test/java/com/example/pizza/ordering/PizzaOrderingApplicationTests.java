@@ -36,6 +36,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 class PizzaOrderingApplicationTests {
 	private static final Integer FIRST_ORDER_ID = 1;
 
+	String urlPrefix;
 	Integer presidentId;
 
 	@LocalServerPort
@@ -54,6 +55,8 @@ class PizzaOrderingApplicationTests {
 
 	@BeforeEach
 	void beforeEach() {
+		urlPrefix = "http://localhost:" + port + "/pizzaOrdering";
+
 		pizzaController.addNewPizza("HW", "Hawai", BigDecimal.valueOf(129.99));
 		pizzaController.addNewPizza("NP", "Napoli", BigDecimal.valueOf(150));
 		pizzaController.addNewPizza("QF", "Quattro Formaggi", BigDecimal.valueOf(199));
@@ -94,11 +97,11 @@ class PizzaOrderingApplicationTests {
 		formParameters.add("name", "Capo del Formaggio");
 		formParameters.add("price", "200");
 
-		addEntity("/pizzas/add", formParameters, "Pizza Capo del Formaggio created");
+		addEntity("/pizzas", formParameters, "Pizza Capo del Formaggio created");
 		checkEntities("/pizzas", Pizza[].class, Pizza::getName,
 				"Hawai", "Napoli", "Quattro Formaggi", "Capo del Formaggio");
 
-		restTemplate.delete("http://localhost:" + port + "/pizzaOrdering/pizzas/CDF");
+		restTemplate.delete(urlPrefix + "/pizzas/CDF");
 		checkEntities("/pizzas", Pizza[].class, Pizza::getName,
 				"Hawai", "Napoli", "Quattro Formaggi");
 	}
@@ -114,7 +117,7 @@ class PizzaOrderingApplicationTests {
 		formParameters.add("name", "Petr Pavel");
 		formParameters.add("address", "Prazsky Hrad");
 
-		addEntity("/customers/add", formParameters, "Customer Petr Pavel created");
+		addEntity("/customers", formParameters, "Customer Petr Pavel created");
 
 		checkEntities("/customers", Customer[].class, Customer::getName,
 				"Donald Trump", "Petr Pavel");
@@ -126,7 +129,7 @@ class PizzaOrderingApplicationTests {
 				Customer::getName,
 				Customer::getId);
 
-		restTemplate.delete("http://localhost:" + port + "/pizzaOrdering/customers/" + customerId);
+		restTemplate.delete(urlPrefix + "/customers/" + customerId);
 
 		checkEntities("/customers", Customer[].class, Customer::getName,
 				"Donald Trump");
@@ -141,17 +144,17 @@ class PizzaOrderingApplicationTests {
 				formParameters,
 				"Order " + FIRST_ORDER_ID + " created for Donald Trump customer");
 
-		ResponseEntity<Order> response =
-				restTemplate.getForEntity(
-						"http://localhost:" + port + "/pizzaOrdering/orders/" + FIRST_ORDER_ID, Order.class);
+		ResponseEntity<Order> response = restTemplate.getForEntity(
+				urlPrefix + "/orders/" + FIRST_ORDER_ID, Order.class);
 
 		Order resp = response.getBody();
 
 		assertThat(resp).isNotNull();
         assertThat(resp.getOrderItems().size()).isEqualTo(2);
 		assertThat(resp.getTotalPrice().toString()).isEqualTo("527.99");
+		assertThat(resp.getCustomerName()).isEqualTo("Donald Trump");
 
-		restTemplate.delete("http://localhost:" + port + "/pizzaOrdering/orders/" + FIRST_ORDER_ID);
+		restTemplate.delete(urlPrefix + "/orders/" + FIRST_ORDER_ID);
 		checkEntities("/orders", Order[].class, Order::getCustomerName);
 	}
 
@@ -159,8 +162,7 @@ class PizzaOrderingApplicationTests {
 								   Class<E[]> collectionClazz,
 								   Function<E, String> nameFunction,
 								   String... expectedNames) {
-		ResponseEntity<E[]> response = restTemplate.getForEntity(
-						"http://localhost:" + port + "/pizzaOrdering" + uri, collectionClazz);
+		ResponseEntity<E[]> response = restTemplate.getForEntity(urlPrefix + uri, collectionClazz);
 
 		assertThat(response.getStatusCode().value()).isEqualTo(200);
 
@@ -176,9 +178,7 @@ class PizzaOrderingApplicationTests {
 										Class<E[]> collectionClazz,
 										Function<E, String> nameFunction,
 										Function<E, R> idFunction) {
-		ResponseEntity<E[]> response =
-				restTemplate.getForEntity(
-						"http://localhost:" + port + "/pizzaOrdering" + uri, collectionClazz);
+		ResponseEntity<E[]> response = restTemplate.getForEntity(urlPrefix + uri, collectionClazz);
 
 		List<E> allEntities = Arrays.asList(Objects.requireNonNull(response.getBody()));
 
@@ -193,8 +193,7 @@ class PizzaOrderingApplicationTests {
 
 		HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(formParameters, headers);
 
-		ResponseEntity<String> resp =
-				restTemplate.postForEntity("http://localhost:" + port + "/pizzaOrdering" + uri, request, String.class);
+		ResponseEntity<String> resp = restTemplate.postForEntity(urlPrefix + uri, request, String.class);
 
 		assertThat(resp.getBody()).isEqualTo(expectedResponse);
 	}

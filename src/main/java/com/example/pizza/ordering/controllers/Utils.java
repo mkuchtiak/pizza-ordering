@@ -10,7 +10,7 @@ public class Utils {
     private Utils() {
     }
 
-    static <E, T> ResponseEntity<?> removeEntity(CrudRepository<E, T> crudRepository, T entityId) {
+    static <E, T, R> ResponseEntity<R> removeEntity(CrudRepository<E, T> crudRepository, T entityId) {
         Optional<E> opt = crudRepository.findById(entityId);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();

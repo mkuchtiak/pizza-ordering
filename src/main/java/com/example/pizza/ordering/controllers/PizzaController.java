@@ -23,12 +23,7 @@ public class PizzaController {
         return pizzaRepository.findAll();
     }
 
-    @GetMapping(path="{pizzaId}")
-    public @ResponseBody Pizza getCustomers(@PathVariable("pizzaId") String pizzaId) {
-        return pizzaRepository.findById(pizzaId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
-    }
-
-    @PostMapping(path="add") // Map ONLY POST Requests
+    @PostMapping(path="") // Map ONLY POST Requests
     public @ResponseBody String addNewPizza(@RequestParam String id,
                                             @RequestParam String name,
                                             @RequestParam BigDecimal price) {
@@ -38,6 +33,11 @@ public class PizzaController {
         p.setPrice(price);
         pizzaRepository.save(p);
         return String.format("Pizza %s created", p.getName());
+    }
+
+    @GetMapping(path="{pizzaId}")
+    public @ResponseBody Pizza getCustomers(@PathVariable("pizzaId") String pizzaId) {
+        return pizzaRepository.findById(pizzaId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(path="{pizzaId}")
