@@ -1,5 +1,6 @@
-This is a sample Pizza Ordering demo application - server part.
-The client part is missing.
+This is a sample Pizza Ordering demo application - backend part.
+Client can communicate with the backend by using REST API, described in
+[pizza-ordering-OpenApi.yaml](pizza-ordering-OpenApi.yaml) file.
 
-The application exposes REST API, described in [OpenApi description](pizza-ordering-OpenApi.yaml) file.
-The file can be explored in Swagger UI format, by using [Swagger UI Editor](https://editor.swagger.io/)
+The **pizza-ordering-OpenApi.yaml** file can be also explored in Swagger UI format,
+by using [Swagger UI Editor](https://editor.swagger.io/).
