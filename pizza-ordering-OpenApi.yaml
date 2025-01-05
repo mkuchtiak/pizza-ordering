@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 1.0
+  version: "1.0"
   title: pizza-ordering
   description: Rest API for Pizza Ordering Demo
 servers:
@@ -112,12 +112,12 @@ paths:
     post:
       operationId: addOrderForCustomer
       description: |
-        Add order for customer. The pizzaList form parameter has the following format: 
+        Add order for customer. The pizzaList form parameter has the following format: |
         pizzaList="{pizza_id1}[:count],{pizza_id2}[:count],..."
         (note the count is optional, and set to 1 when missing)
         Example:
         pizzaList="HW:2,PS,QF:3"
-        (two pizzas of Hawaii, one Prosciutto, 3 pizzas of Quattro Formaggi)
+        (two pizzas of Hawaii, one Prosciutto, three pizzas of Quattro Formaggi)
       parameters:
         - in: path
           name: id
@@ -137,7 +137,7 @@ paths:
               schema:
                 type: string
         404:
-          description: customer ID is incorrect or pizzaList contains incorrect pizza id
+          description: customer ID is incorrect or pizzaList contains incorrect pizza IDs
   /orders:
     get:
       operationId: getAllOrders
@@ -172,7 +172,6 @@ paths:
         404:
           description: order ID is incorrect
 components:
-  securitySchemes: {}
   schemas:
     pizza:
       required:
