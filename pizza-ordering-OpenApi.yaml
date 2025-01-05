@@ -1,0 +1,254 @@
+openapi: 3.0.0
+info:
+  version: 1.0
+  title: pizza-ordering
+  description: Rest API for Pizza Ordering Demo
+servers:
+  - url: http://localhost:8080/pizzaOrdering
+paths:
+  /pizzas:
+    get:
+      operationId: getAllPizzas
+      description: Get all pizza objects
+      responses:
+        200:
+          description: pizza list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/pizza"
+    post:
+      operationId: addNewPizza
+      description: |
+        Add new pizza. The form parameters are in the following format(example):
+        id=QF
+        name="Quattro Formaggi"
+        price=199.90
+        (note that id string parameter is required)
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/pizza"
+      responses:
+        200:
+          description: pizza object was successfully created
+          content:
+            text/plain:
+              schema:
+                type: string
+  /pizzas/{id}:
+    get:
+      operationId: getPizza
+      description: Get pizza object for given pizza ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: pizza object was successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/pizza"
+        404:
+          description: returns when pizza ID is incorrect
+  /customers:
+    get:
+      operationId: getAllCustomers
+      description: Get all customers
+      responses:
+        200:
+          description: customer list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/customer"
+    post:
+      operationId: addNewCustomer
+      description: |
+        Add new customer. The form parameters are in the following format(example):
+        name="John Doe"
+        address="456 Elm Street, Suite 3, Los Angeles, CA 90001, USA"
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/customerForm"
+      responses:
+        200:
+          description: customer object was successfully created
+          content:
+            text/plain:
+              schema:
+                type: string
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      description: Get customer for given customer ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: customer object was successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/customer"
+        404:
+          description: customer ID is incorrect
+  /customers/{id}/addOrder:
+    post:
+      operationId: addOrderForCustomer
+      description: |
+        Add order for customer. The pizzaList form parameter has the following format: 
+        pizzaList="{pizza_id1}[:count],{pizza_id2}[:count],..."
+        (note the count is optional, and set to 1 when missing)
+        Example:
+        pizzaList="HW:2,PS,QF:3"
+        (two pizzas of Hawaii, one Prosciutto, 3 pizzas of Quattro Formaggi)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: "#/components/schemas/orderForm"
+      responses:
+        200:
+          description: order was successfully created
+          content:
+            text/plain:
+              schema:
+                type: string
+        404:
+          description: customer ID is incorrect or pizzaList contains incorrect pizza id
+  /orders:
+    get:
+      operationId: getAllOrders
+      description: Get all orders
+      parameters: []
+      responses:
+        200:
+          description: order list was successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/order"
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      description: Get order for given order ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: order object was successfully retrieved
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/order"
+        404:
+          description: order ID is incorrect
+components:
+  securitySchemes: {}
+  schemas:
+    pizza:
+      required:
+        - id
+        - name
+        - price
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        price:
+          type: number
+    customer:
+      required:
+        - id
+        - name
+        - address
+        - orders
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        address:
+          type: string
+        orders:
+          type: array
+          items:
+            $ref: "#/components/schemas/order"
+    customerForm:
+      required:
+        - name
+        - address
+      properties:
+        name:
+          type: string
+        address:
+          type: string
+    order:
+      required:
+        - id
+        - date
+        - orderItems
+        - customerName
+        - totalPrice
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        orderItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/order-item"
+        customerName:
+          type: string
+        totalPrice:
+          type: number
+    order-item:
+      required:
+        - id
+        - pizza
+        - amount
+      properties:
+        id:
+          type: integer
+        pizza:
+          $ref: "#/components/schemas/pizza"
+        amount:
+          type: integer
+          minimum: 0
+    orderForm:
+      required:
+        - pizzaList
+      properties:
+        pizzaList:
+          type: string
