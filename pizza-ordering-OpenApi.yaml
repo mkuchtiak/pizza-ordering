@@ -277,12 +277,12 @@ components:
         orderItems:
           type: array
           items:
-            $ref: "#/components/schemas/order-item"
+            $ref: "#/components/schemas/orderItem"
         customerName:
           type: string
         totalPrice:
           type: number
-    order-item:
+    orderItem:
       required:
         - id
         - pizza
