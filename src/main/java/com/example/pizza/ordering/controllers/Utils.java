@@ -16,7 +16,7 @@ public class Utils {
             return ResponseEntity.notFound().build();
         } else {
             crudRepository.delete(opt.get());
-            return ResponseEntity.ok().build();
+            return ResponseEntity.noContent().build();
         }
     }
 }
