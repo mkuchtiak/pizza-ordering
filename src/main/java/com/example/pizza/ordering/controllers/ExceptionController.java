@@ -13,6 +13,7 @@ import static com.example.pizza.ordering.controllers.Exceptions.NotFoundExceptio
 @ControllerAdvice
 public class ExceptionController {
     @ExceptionHandler(value = NotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
     ResponseEntity<?> exception(NotFoundException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.NOT_FOUND);
     }
