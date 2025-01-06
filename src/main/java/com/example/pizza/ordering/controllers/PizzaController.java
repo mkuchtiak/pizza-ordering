@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.net.URI;
+
+import static com.example.pizza.ordering.controllers.Exceptions.AlreadyExistsException;
 
 @Controller
 @RequestMapping(path=Constants.RESOURCE_URI_PREFIX + "/pizzas")
@@ -24,24 +27,32 @@ public class PizzaController {
     }
 
     @PostMapping(path="")
-    public @ResponseBody String addNewPizza(@RequestParam String id,
-                                            @RequestParam String name,
-                                            @RequestParam BigDecimal price) {
+    public ResponseEntity<?> addNewPizza(@RequestParam String id,
+                                         @RequestParam String name,
+                                         @RequestParam BigDecimal price) {
+
+        if (pizzaRepository.findById(id).isPresent()) {
+            throw new AlreadyExistsException("Pizza with id " + id + " already exists");
+        }
+
         Pizza p = new Pizza();
         p.setId(id);
         p.setName(name);
         p.setPrice(price);
         pizzaRepository.save(p);
-        return String.format("Pizza %s created", p.getName());
+
+        return ResponseEntity.created(URI.create(Constants.RESOURCE_URI_PREFIX + "/pizzas/" + id))
+                .body(String.format("Pizza %s created", p.getName()));
+
     }
 
     @GetMapping(path="{pizzaId}")
-    public @ResponseBody Pizza getCustomers(@PathVariable("pizzaId") String pizzaId) {
+    public @ResponseBody Pizza getPizza(@PathVariable("pizzaId") String pizzaId) {
         return pizzaRepository.findById(pizzaId).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping(path="{pizzaId}")
-    public ResponseEntity<?> removePizza(@PathVariable("pizzaId") String pizzaId) {
+    public @ResponseBody ResponseEntity<?> removePizza(@PathVariable("pizzaId") String pizzaId) {
         return Utils.removeEntity(pizzaRepository, pizzaId);
     }
 }

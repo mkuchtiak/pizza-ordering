@@ -33,12 +33,16 @@ paths:
             schema:
               $ref: "#/components/schemas/pizza"
       responses:
-        200:
+        201:
           description: pizza object was successfully created
           content:
             text/plain:
               schema:
                 type: string
+        400:
+          description: incorrect form parameters
+        409:
+          description: pizza object for given ID already exists
   /pizzas/{id}:
     get:
       operationId: getPizza
@@ -57,7 +61,21 @@ paths:
               schema:
                 $ref: "#/components/schemas/pizza"
         404:
-          description: returns when pizza ID is incorrect
+          description: pizza ID is incorrect
+    delete:
+      operationId: deletePizza
+      description: Delete pizza for given pizza ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: pizza object was successfully deleted
+        404:
+          description: pizza ID is incorrect
   /customers:
     get:
       operationId: getAllCustomers
@@ -83,12 +101,14 @@ paths:
             schema:
               $ref: "#/components/schemas/customerForm"
       responses:
-        200:
+        201:
           description: customer object was successfully created
           content:
             text/plain:
               schema:
                 type: string
+        400:
+          description: incorrect form parameters
   /customers/{id}:
     get:
       operationId: getCustomer
@@ -106,6 +126,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/customer"
+        404:
+          description: customer ID is incorrect
+    delete:
+      operationId: deleteCustomer
+      description: Delete customer for given customer ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: customer object was successfully deleted
         404:
           description: customer ID is incorrect
   /customers/{id}/addOrder:
@@ -130,14 +164,16 @@ paths:
             schema:
               $ref: "#/components/schemas/orderForm"
       responses:
-        200:
+        201:
           description: order was successfully created
           content:
             text/plain:
               schema:
                 type: string
+        400:
+          description: incorrect pizzaList parameter, or pizzaList contains incorrect pizza ID
         404:
-          description: customer ID is incorrect or pizzaList contains incorrect pizza IDs
+          description: customer ID is incorrect
   /orders:
     get:
       operationId: getAllOrders
@@ -169,6 +205,20 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/order"
+        404:
+          description: order ID is incorrect
+    delete:
+      operationId: deleteOrder
+      description: Delete order for given order ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: number
+      responses:
+        200:
+          description: order object was successfully deleted
         404:
           description: order ID is incorrect
 components:

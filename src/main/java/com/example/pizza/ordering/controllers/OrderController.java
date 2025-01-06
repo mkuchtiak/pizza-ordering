@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
-
 @Controller
 @RequestMapping(path=Constants.RESOURCE_URI_PREFIX + "/orders")
 public class OrderController {

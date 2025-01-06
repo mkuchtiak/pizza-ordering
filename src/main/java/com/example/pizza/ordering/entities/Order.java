@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 @Entity
 @Table(name = "orders")
@@ -39,7 +40,7 @@ public class Order {
 
     @Transient
     public String getCustomerName() {
-        return customerName != null ? customerName : customer.getName();
+        return Optional.ofNullable(customer).map(Customer::getName).orElse(customerName);
     }
 
     @Transient
