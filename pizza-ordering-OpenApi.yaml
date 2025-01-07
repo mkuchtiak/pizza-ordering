@@ -251,7 +251,7 @@ components:
         orders:
           type: array
           items:
-            $ref: "#/components/schemas/order"
+            $ref: "#/components/schemas/orderWithoutCustomer"
     customerForm:
       required:
         - name
@@ -265,8 +265,38 @@ components:
       required:
         - id
         - date
+        - customer
         - orderItems
-        - customerName
+        - totalPrice
+      properties:
+        id:
+          type: integer
+        date:
+          type: string
+          format: date-time
+        customer:
+            required:
+              - id
+              - name
+              - address
+            properties:
+              id:
+                type: string
+              name:
+                type: string
+              address:
+                type: string
+        orderItems:
+          type: array
+          items:
+            $ref: "#/components/schemas/orderItem"
+        totalPrice:
+          type: number
+    orderWithoutCustomer:
+      required:
+        - id
+        - date
+        - orderItems
         - totalPrice
       properties:
         id:
@@ -278,8 +308,6 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/orderItem"
-        customerName:
-          type: string
         totalPrice:
           type: number
     orderItem:

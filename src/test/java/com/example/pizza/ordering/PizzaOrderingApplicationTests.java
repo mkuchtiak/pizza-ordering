@@ -152,10 +152,17 @@ class PizzaOrderingApplicationTests {
 		assertThat(resp).isNotNull();
         assertThat(resp.getOrderItems().size()).isEqualTo(2);
 		assertThat(resp.getTotalPrice().toString()).isEqualTo("527.99");
-		assertThat(resp.getCustomerName()).isEqualTo("Donald Trump");
+		assertThat(resp.getCustomer().getId()).isEqualTo(presidentId);
+		assertThat(resp.getCustomer().getName()).isEqualTo("Donald Trump");
+		assertThat(resp.getCustomer().getAddress()).isEqualTo("White House");
 
 		restTemplate.delete(urlPrefix + "/orders/" + FIRST_ORDER_ID);
-		checkEntities("/orders", Order[].class, Order::getCustomerName);
+
+		// check orders size after delete
+		ResponseEntity<Order[]> getAllResp =
+				restTemplate.getForEntity(urlPrefix + "/orders", Order[].class);
+		assertThat(getAllResp.getStatusCode().value()).isEqualTo(200);
+		assertThat(getAllResp.getBody().length).isEqualTo(0);
 	}
 
 	private <E> void checkEntities(String uri,
@@ -195,6 +202,7 @@ class PizzaOrderingApplicationTests {
 
 		ResponseEntity<String> resp = restTemplate.postForEntity(urlPrefix + uri, request, String.class);
 
+		assertThat(resp.getStatusCode().value()).isEqualTo(201);
 		assertThat(resp.getBody()).isEqualTo(expectedResponse);
 	}
 

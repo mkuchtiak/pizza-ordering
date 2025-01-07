@@ -1,5 +1,6 @@
 package com.example.pizza.ordering.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ public class Customer {
     private String address;
 
     @OneToMany(mappedBy = "customer")
+    @JsonIgnoreProperties("customer")
     private List<Order> orders;
 
     public Integer getId() {

@@ -1,11 +1,11 @@
 package com.example.pizza.ordering.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 @Entity
 @Table(name = "orders")
@@ -18,6 +18,7 @@ public class Order {
 
     @ManyToOne
     @JoinColumn(name = "customer_id")
+    @JsonIgnoreProperties("orders")
     private Customer customer;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
@@ -38,9 +39,8 @@ public class Order {
         return orderItems;
     }
 
-    @Transient
-    public String getCustomerName() {
-        return Optional.ofNullable(customer).map(Customer::getName).orElse(customerName);
+    public Customer getCustomer() {
+        return customer;
     }
 
     @Transient
