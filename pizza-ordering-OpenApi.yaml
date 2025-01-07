@@ -271,9 +271,9 @@ components:
       required:
         - id
         - date
-        - customer
         - orderItems
         - totalPrice
+        - customer
       allOf:
         - $ref: "#/components/schemas/order"
         - properties:
