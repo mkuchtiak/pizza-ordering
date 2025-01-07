@@ -88,7 +88,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/customer"
+                  $ref: "#/components/schemas/customerWithOrders"
     post:
       operationId: addNewCustomer
       description: |
@@ -125,7 +125,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/customer"
+                $ref: "#/components/schemas/customerWithOrders"
         404:
           description: customer ID is incorrect
     delete:
@@ -187,7 +187,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/order"
+                  $ref: "#/components/schemas/orderWithCustomer"
   /orders/{id}:
     get:
       operationId: getOrder
@@ -204,7 +204,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/order"
+                $ref: "#/components/schemas/orderWithCustomer"
         404:
           description: order ID is incorrect
     delete:
@@ -235,23 +235,29 @@ components:
           type: string
         price:
           type: number
-    customer:
+    customerWithOrders:
       required:
         - id
         - name
         - address
         - orders
-      properties:
-        id:
-          type: integer
-        name:
-          type: string
-        address:
-          type: string
-        orders:
-          type: array
-          items:
-            $ref: "#/components/schemas/orderWithoutCustomer"
+      allOf:
+        - $ref: "#/components/schemas/customer"
+        - properties:
+            orders:
+              type: array
+              items:
+                $ref: "#/components/schemas/order"
+    customer:
+      required:
+        - id
+        - name
+        - address
+      allOf:
+        - properties:
+            id:
+              type: integer
+        - $ref: "#/components/schemas/customerForm"
     customerForm:
       required:
         - name
@@ -261,38 +267,19 @@ components:
           type: string
         address:
           type: string
-    order:
+    orderWithCustomer:
       required:
         - id
         - date
         - customer
         - orderItems
         - totalPrice
-      properties:
-        id:
-          type: integer
-        date:
-          type: string
-          format: date-time
-        customer:
-            required:
-              - id
-              - name
-              - address
-            properties:
-              id:
-                type: string
-              name:
-                type: string
-              address:
-                type: string
-        orderItems:
-          type: array
-          items:
-            $ref: "#/components/schemas/orderItem"
-        totalPrice:
-          type: number
-    orderWithoutCustomer:
+      allOf:
+        - $ref: "#/components/schemas/order"
+        - properties:
+            customer:
+              $ref: "#/components/schemas/customer"
+    order:
       required:
         - id
         - date
