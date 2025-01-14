@@ -24,9 +24,6 @@ public class Order {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @Transient
-    private String customerName;
-
     public Integer getId() {
         return id;
     }
@@ -43,7 +40,6 @@ public class Order {
         return customer;
     }
 
-    @Transient
     public BigDecimal getTotalPrice() {
         return orderItems.stream()
                 .map(item -> item.getPizza().getPrice().multiply(BigDecimal.valueOf(item.getAmount())))
